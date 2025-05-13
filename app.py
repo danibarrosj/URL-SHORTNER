@@ -36,7 +36,6 @@ def shorten_url():
         if not long_url:
             return jsonify({'error': 'Missing URL'}), 400  
 
-        # Check if URL already exists
         existing = URL.query.filter_by(long_url=long_url).first()
         if existing:
             return jsonify({'short_url': request.host_url + existing.short_code}), 200  
@@ -49,7 +48,7 @@ def shorten_url():
         return jsonify({'short_url': request.host_url + short_code}), 200  
 
     except Exception as e:
-        print("Error:", str(e))  # Debugging
+        print("Error:", str(e))  
         return jsonify({'error': 'Internal Server Error', 'details': str(e)}), 500  
 
 
