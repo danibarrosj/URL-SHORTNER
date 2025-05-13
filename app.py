@@ -3,7 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 import string,random
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///urls.db' # Database
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///urls.db' 
 db = SQLAlchemy(app)
 
 class URL(db.Model):
@@ -23,34 +23,34 @@ def home():
 @app.route('/shorten', methods=['POST'])
 def shorten_url():
     try:
-        print("Request received:", request.headers)  # Debugging
+        print("Request received:", request.headers)  
 
         if request.is_json:
             data = request.get_json()
         else:
-            data = request.form  # ✅ Ensure it reads form data properly
+            data = request.form  
 
         long_url = data.get("long_url")
-        print("Received long_url:", long_url)  # Debugging
+        print("Received long_url:", long_url)  
 
         if not long_url:
-            return jsonify({'error': 'Missing URL'}), 400  # ✅ Ensure proper return format
+            return jsonify({'error': 'Missing URL'}), 400  
 
         # Check if URL already exists
         existing = URL.query.filter_by(long_url=long_url).first()
         if existing:
-            return jsonify({'short_url': request.host_url + existing.short_code}), 200  # ✅ Add status code
+            return jsonify({'short_url': request.host_url + existing.short_code}), 200  
 
         short_code = generate_short_code()
         new_url = URL(long_url=long_url, short_code=short_code)
         db.session.add(new_url)
         db.session.commit()
 
-        return jsonify({'short_url': request.host_url + short_code}), 200  # ✅ Proper JSON response
+        return jsonify({'short_url': request.host_url + short_code}), 200  
 
     except Exception as e:
         print("Error:", str(e))  # Debugging
-        return jsonify({'error': 'Internal Server Error', 'details': str(e)}), 500  # ✅ Ensure Flask gets a response
+        return jsonify({'error': 'Internal Server Error', 'details': str(e)}), 500  
 
 
 @app.route('/<short_code>')
